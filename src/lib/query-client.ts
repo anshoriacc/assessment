@@ -1,11 +1,12 @@
 import { ApiError } from '@/server/axios'
+import { AnyRouter } from '@tanstack/react-router'
 import {
+  isServer,
   QueryCache,
   QueryClient,
   defaultShouldDehydrateQuery,
-  isServer,
 } from '@tanstack/react-query'
-import { AnyRouter } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
 // Module-level reference, set after router is created
 let routerRef: AnyRouter | null = null
@@ -20,8 +21,10 @@ function makeQueryClient() {
       onError: (error) => {
         if (error instanceof ApiError && error.statusCode === 401) {
           if (routerRef) {
+            toast.error('Session expired, please login again')
             routerRef.navigate({ to: '/login', replace: true })
           } else {
+            toast.error('Session expired, please login again')
             if (!isServer) window.location.href = '/login'
           }
         }

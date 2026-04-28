@@ -123,7 +123,7 @@ function DashboardLayoutContent() {
         {isHoverPreviewOpen && !isSidebarOpen && (
           <div
             aria-hidden
-            className="fixed top-(--header-height) left-0 z-[9] h-[calc(100svh-var(--header-height))] w-[calc(var(--sidebar-width)+(--spacing(4)))]"
+            className="fixed top-(--header-height) left-0 z-9 h-[calc(100svh-var(--header-height))] w-[calc(var(--sidebar-width)+(--spacing(4)))]"
             onMouseEnter={openHoverPreview}
             onMouseLeave={scheduleCloseHoverPreview}
           />

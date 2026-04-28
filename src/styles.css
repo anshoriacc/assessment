@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/montserrat';
 
 @source './routes';
 @source './components';

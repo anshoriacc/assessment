@@ -16,9 +16,6 @@ This repository is a TanStack Start app used as a personal technical assessment 
 ## Current App Features
 
 - Showcase home page at `/`
-- Assessment route group at `/ellty`
-- Live assessment page at `/ellty/quick-form-styling`
-- Health check endpoint at `/health`
 - Global command palette (Cmd/Ctrl + K)
 - SSR-safe theme system (light/dark/system)
 - Global top back button for non-home routes

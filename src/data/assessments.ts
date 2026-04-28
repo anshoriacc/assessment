@@ -22,6 +22,10 @@ export const assessments: Assessment[] = [
   },
 ]
 
+export function isExternalAssessmentDestination(assessment: Assessment) {
+  return /^https?:\/\//i.test(assessment.to)
+}
+
 export function getAssessmentsByCompany(company: string) {
   const normalizedCompany = company.toLowerCase()
 

@@ -20,7 +20,10 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command'
-import { getAssessmentsGroupedByCompany } from '@/data/assessments'
+import {
+  getAssessmentsGroupedByCompany,
+  isExternalAssessmentDestination,
+} from '@/data/assessments'
 import { useCommandOpen, useCommandSetOpen } from '@/stores/command'
 import { useResolvedTheme, useSetTheme } from '@/stores/theme'
 
@@ -91,7 +94,11 @@ export const GlobalCommandPalette = () => {
                     key={assessment.id}
                     onSelect={() => {
                       setOpen(false)
-                      navigate({ to: assessment.to })
+                      if (isExternalAssessmentDestination(assessment)) {
+                        window.open(assessment.to, '_blank', 'noopener,noreferrer')
+                      } else {
+                        navigate({ to: assessment.to })
+                      }
                       toast.success(`Opening ${assessment.title}`)
                     }}
                   >

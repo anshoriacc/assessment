@@ -2,7 +2,10 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { IconBrandGithub } from '@tabler/icons-react'
 
 import { cn } from '@/lib/utils'
-import { assessments } from '@/data/assessments'
+import {
+  assessments,
+  isExternalAssessmentDestination,
+} from '@/data/assessments'
 import { MotionContainer, MotionItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,6 +39,7 @@ function HomePage() {
                 href="https://github.com/anshoriacc/assessment"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="cursor-external-link"
               />
             }
           >
@@ -62,7 +66,18 @@ function HomePage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  render={<Link to={assessment.to} />}
+                  render={
+                    isExternalAssessmentDestination(assessment) ? (
+                      <a
+                        href={assessment.to}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-external-link"
+                      />
+                    ) : (
+                      <Link to={assessment.to} />
+                    )
+                  }
                 >
                   View assessment
                 </Button>

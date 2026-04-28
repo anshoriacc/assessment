@@ -1,68 +1,64 @@
-# TanStack Start Starter
+# Assessment Showcase
 
-A modern, type-safe full-stack React boilerplate with authentication, routing, and data fetching.
-
-## Demo
-
-Preview: [https://starter.anshori.com/](https://starter.anshori.com/)
+This repository is a TanStack Start app used as a personal technical assessment showcase.
 
 ## Tech Stack
 
 - **Framework**: TanStack Start (React 19 + Vite)
-- **Routing**: TanStack Router (type-safe file-based routing)
-- **Data Fetching**: TanStack Query v5
+- **Routing**: TanStack Router (file-based, type-safe)
+- **Data Layer**: TanStack Query v5
 - **Forms**: TanStack Form
-- **Auth**: Better Auth
-- **Styling**: TailwindCSS v4 + shadcn/ui components
+- **Styling**: TailwindCSS v4 + Base UI / shadcn-style primitives
 - **State**: Zustand
+- **Animation**: Motion
 - **Testing**: Vitest
 
-## Features
+## Current App Features
 
-- Type-safe routing with TanStack Router
-- SSR with hydration support
-- Authentication with Better Auth (credentials + session)
-- Protected routes with middleware
-- Theme system (light/dark/system) with SSR flash prevention
-- Command palette (Cmd+K)
-- Hotkeys support
-- DevTools integration (React Query, Router, Form, Hotkeys)
+- Showcase home page at `/`
+- Assessment route group at `/ellty`
+- Live assessment page at `/ellty/quick-form-styling`
+- Health check endpoint at `/health`
+- Global command palette (Cmd/Ctrl + K)
+- SSR-safe theme system (light/dark/system)
+- Global top back button for non-home routes
+- Footer with theme toggle controls
+- Devtools integration (Router, Query, Form, Hotkeys)
 
 ## Getting Started
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Start development server
 pnpm dev
-
-# Build for production
-pnpm build
-
-# Run tests
-pnpm test
-
-# Lint & format
-pnpm check
 ```
+
+## Scripts
+
+| Command        | Description              |
+| -------------- | ------------------------ |
+| `pnpm dev`     | Start development server |
+| `pnpm build`   | Build for production     |
+| `pnpm preview` | Preview production build |
+| `pnpm test`    | Run tests                |
+| `pnpm lint`    | Run ESLint               |
+| `pnpm format`  | Run Prettier             |
+| `pnpm check`   | Format and lint          |
 
 ## Project Structure
 
 ```
 src/
-├── components/       # Reusable UI components
-│   └── ui/          # shadcn-like components
-├── hooks/           # Custom React hooks
-│   └── api/        # Data fetching hooks
-├── lib/             # Utilities & clients
-│   ├── auth/       # Better Auth setup
-│   ├── query-client.ts
-│   └── utils.ts
-├── routes/          # File-based routes
-├── server/          # Server-side code
-├── stores/          # Zustand stores
-└── router.tsx      # Router configuration
+├── components/          # App-level components
+│   └── ui/              # Reusable UI primitives
+├── constants/           # Environment constants
+├── data/                # Showcase data sources
+├── hooks/               # Shared hooks
+├── lib/                 # Utilities and shared setup
+├── routes/              # File-based routes
+├── server/              # Server functions
+├── stores/              # Zustand stores
+├── router.tsx           # Router instance setup
+└── routeTree.gen.ts     # Auto-generated route tree
 ```
 
 ## Documentation
@@ -73,30 +69,10 @@ src/
 
 ## Environment Variables
 
-Create a `.env` file:
+Current source uses:
 
 ```env
-BETTER_AUTH_URL=http://localhost:3000
-BETTER_AUTH_SECRET=your-secret-key
-API_BASE_URL=https://dummyjson.com
+SITE_URL=http://localhost:3000
 ```
 
-## Scripts
-
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `pnpm dev`     | Start dev server         |
-| `pnpm build`   | Build for production     |
-| `pnpm preview` | Preview production build |
-| `pnpm test`    | Run tests                |
-| `pnpm lint`    | Lint code                |
-| `pnpm format`  | Format code              |
-| `pnpm check`   | Lint & format            |
-
-## Before Creating a PR
-
-Run the check command to ensure code quality:
-
-```bash
-pnpm check
-```
+If you are only running the current live showcase pages, only `SITE_URL` is generally needed.

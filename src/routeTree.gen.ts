@@ -11,14 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as HealthRouteImport } from './routes/health'
 import { Route as ElltyRouteImport } from './routes/ellty'
-import { Route as ProtectedRouteImport } from './routes/_protected'
-import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ElltyIndexRouteImport } from './routes/ellty/index'
 import { Route as ElltyQuickFormStylingRouteImport } from './routes/ellty/quick-form-styling'
-import { Route as ProtectedDashboardRouteImport } from './routes/_protected/_dashboard'
-import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as ProtectedDashboardDashboardRouteImport } from './routes/_protected/_dashboard/dashboard'
 
 const HealthRoute = HealthRouteImport.update({
   id: '/health',
@@ -30,75 +25,42 @@ const ElltyRoute = ElltyRouteImport.update({
   path: '/ellty',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedRoute = ProtectedRouteImport.update({
-  id: '/_protected',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ElltyIndexRoute = ElltyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ElltyRoute,
 } as any)
 const ElltyQuickFormStylingRoute = ElltyQuickFormStylingRouteImport.update({
   id: '/quick-form-styling',
   path: '/quick-form-styling',
   getParentRoute: () => ElltyRoute,
 } as any)
-const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
-  id: '/_dashboard',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => AuthRoute,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProtectedDashboardDashboardRoute =
-  ProtectedDashboardDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => ProtectedDashboardRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ellty': typeof ElltyRouteWithChildren
   '/health': typeof HealthRoute
   '/ellty/quick-form-styling': typeof ElltyQuickFormStylingRoute
-  '/dashboard': typeof ProtectedDashboardDashboardRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/login/': typeof AuthLoginIndexRoute
+  '/ellty/': typeof ElltyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/ellty': typeof ElltyRouteWithChildren
   '/health': typeof HealthRoute
   '/ellty/quick-form-styling': typeof ElltyQuickFormStylingRoute
-  '/dashboard': typeof ProtectedDashboardDashboardRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/login': typeof AuthLoginIndexRoute
+  '/ellty': typeof ElltyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRouteWithChildren
-  '/_protected': typeof ProtectedRouteWithChildren
   '/ellty': typeof ElltyRouteWithChildren
   '/health': typeof HealthRoute
-  '/_protected/_dashboard': typeof ProtectedDashboardRouteWithChildren
   '/ellty/quick-form-styling': typeof ElltyQuickFormStylingRoute
-  '/_protected/_dashboard/dashboard': typeof ProtectedDashboardDashboardRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/_auth/login/': typeof AuthLoginIndexRoute
+  '/ellty/': typeof ElltyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,39 +69,22 @@ export interface FileRouteTypes {
     | '/ellty'
     | '/health'
     | '/ellty/quick-form-styling'
-    | '/dashboard'
-    | '/api/auth/$'
-    | '/login/'
+    | '/ellty/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/ellty'
-    | '/health'
-    | '/ellty/quick-form-styling'
-    | '/dashboard'
-    | '/api/auth/$'
-    | '/login'
+  to: '/' | '/health' | '/ellty/quick-form-styling' | '/ellty'
   id:
     | '__root__'
     | '/'
-    | '/_auth'
-    | '/_protected'
     | '/ellty'
     | '/health'
-    | '/_protected/_dashboard'
     | '/ellty/quick-form-styling'
-    | '/_protected/_dashboard/dashboard'
-    | '/api/auth/$'
-    | '/_auth/login/'
+    | '/ellty/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRouteWithChildren
-  ProtectedRoute: typeof ProtectedRouteWithChildren
   ElltyRoute: typeof ElltyRouteWithChildren
   HealthRoute: typeof HealthRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,26 +103,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElltyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/ellty/': {
+      id: '/ellty/'
+      path: '/'
+      fullPath: '/ellty/'
+      preLoaderRoute: typeof ElltyIndexRouteImport
+      parentRoute: typeof ElltyRoute
     }
     '/ellty/quick-form-styling': {
       id: '/ellty/quick-form-styling'
@@ -186,87 +124,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElltyQuickFormStylingRouteImport
       parentRoute: typeof ElltyRoute
     }
-    '/_protected/_dashboard': {
-      id: '/_protected/_dashboard'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedDashboardRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
-    '/_auth/login/': {
-      id: '/_auth/login/'
-      path: '/login'
-      fullPath: '/login/'
-      preLoaderRoute: typeof AuthLoginIndexRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_protected/_dashboard/dashboard': {
-      id: '/_protected/_dashboard/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof ProtectedDashboardDashboardRouteImport
-      parentRoute: typeof ProtectedDashboardRoute
-    }
   }
 }
 
-interface AuthRouteChildren {
-  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthLoginIndexRoute: AuthLoginIndexRoute,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
-interface ProtectedDashboardRouteChildren {
-  ProtectedDashboardDashboardRoute: typeof ProtectedDashboardDashboardRoute
-}
-
-const ProtectedDashboardRouteChildren: ProtectedDashboardRouteChildren = {
-  ProtectedDashboardDashboardRoute: ProtectedDashboardDashboardRoute,
-}
-
-const ProtectedDashboardRouteWithChildren =
-  ProtectedDashboardRoute._addFileChildren(ProtectedDashboardRouteChildren)
-
-interface ProtectedRouteChildren {
-  ProtectedDashboardRoute: typeof ProtectedDashboardRouteWithChildren
-}
-
-const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedDashboardRoute: ProtectedDashboardRouteWithChildren,
-}
-
-const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
-  ProtectedRouteChildren,
-)
-
 interface ElltyRouteChildren {
   ElltyQuickFormStylingRoute: typeof ElltyQuickFormStylingRoute
+  ElltyIndexRoute: typeof ElltyIndexRoute
 }
 
 const ElltyRouteChildren: ElltyRouteChildren = {
   ElltyQuickFormStylingRoute: ElltyQuickFormStylingRoute,
+  ElltyIndexRoute: ElltyIndexRoute,
 }
 
 const ElltyRouteWithChildren = ElltyRoute._addFileChildren(ElltyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRouteWithChildren,
-  ProtectedRoute: ProtectedRouteWithChildren,
   ElltyRoute: ElltyRouteWithChildren,
   HealthRoute: HealthRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

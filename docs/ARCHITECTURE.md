@@ -1,171 +1,109 @@
 # Architecture
 
-This document describes the high-level architecture of this TanStack Start application.
+This document describes the current architecture of the Assessment Showcase app.
+
+## Overview
+
+The app is a TanStack Start project with SSR, file-based routing, a small set of live showcase pages, and a reusable UI layer.
+
+### Current Routes
+
+- `/` - Showcase home with cards sourced from `src/data/assessments.ts`
+- `/ellty` - Route group/layout container
+- `/ellty/quick-form-styling` - Live assessment page
+- `/health` - Health endpoint
 
 ## Tech Stack
 
-| Layer         | Technology                              |
-| ------------- | --------------------------------------- |
-| Framework     | TanStack Start (React 19 + Vite)        |
-| Routing       | TanStack Router (file-based, type-safe) |
-| Data Fetching | TanStack Query v5                       |
-| Forms         | TanStack Form                           |
-| Auth          | Better Auth                             |
-| Styling       | TailwindCSS v4                          |
-| UI Components | shadcn/ui-style components              |
-| State         | Zustand                                 |
-| Testing       | Vitest                                  |
+| Layer      | Technology                                       |
+| ---------- | ------------------------------------------------ |
+| Framework  | TanStack Start (React 19 + Vite)                 |
+| Routing    | TanStack Router (file-based, type-safe)          |
+| Data/Cache | TanStack Query v5                                |
+| Forms      | TanStack Form                                    |
+| Styling    | TailwindCSS v4 + Base UI/shadcn-style components |
+| State      | Zustand                                          |
+| Animation  | Motion                                           |
+| Testing    | Vitest                                           |
 
-## Project Structure
+## Source Structure
 
 ```
 src/
-├── components/           # Reusable UI components
-│   ├── ui/              # shadcn-style components (40+)
-│   ├── providers.tsx    # Context providers
-│   ├── header.tsx       # App header
-│   ├── app-sidebar.tsx  # Dashboard sidebar
-│   └── command-palette.tsx
-├── hooks/               # Custom React hooks
-│   ├── api/             # API/data fetching hooks
-│   │   ├── auth.ts      # Auth hooks (login, logout, session)
-│   │   └── user.ts      # User hooks
-│   └── use-mobile.ts    # Mobile detection
-├── lib/                 # Libraries & utilities
-│   ├── auth/
-│   │   ├── client.ts    # Client-side auth (better-auth/react)
-│   │   ├── server.ts    # Server-side auth (better-auth)
-│   │   └── plugins.ts   # Custom auth plugins
-│   ├── query-client.ts  # TanStack Query setup
-│   ├── axios.ts         # Axios instance
-│   ├── theme-context.tsx
-│   ├── utils.ts         # Utility functions (cn, etc.)
-│   └── theme-context.tsx
-├── routes/              # File-based routing (TanStack Router)
-├── server/
-│   ├── auth.ts          # Server auth functions (createServerFn)
-│   ├── axios.ts         # Server axios instance
-│   └── theme.ts         # Server theme functions
-├── stores/              # Zustand stores
-│   ├── theme.ts         # Theme store
-│   └── command.ts       # Command palette store
-├── middleware.ts/       # Route middleware
-│   └── auth.ts          # Auth middleware (protected/auth)
-├── schema/              # Zod schemas
-│   └── auth.ts
-├── constants/           # Environment variables
+├── components/
+│   ├── command-palette.tsx
+│   ├── footer.tsx
+│   ├── global-back-button.tsx
+│   ├── providers.tsx
+│   ├── toggle-theme.tsx
+│   └── ui/
+├── constants/
 │   └── env.ts
-├── router.tsx           # Router configuration
-├── routeTree.gen.ts    # Generated route tree
-└── styles.css          # Global styles
+├── data/
+│   └── assessments.ts
+├── hooks/
+│   └── use-mobile.ts
+├── lib/
+│   ├── axios.ts
+│   ├── query-client.ts
+│   ├── theme-context.ts
+│   └── utils.ts
+├── routes/
+│   ├── __root.tsx
+│   ├── index.tsx
+│   ├── health.ts
+│   ├── ellty.tsx
+│   └── ellty/
+│       ├── quick-form-styling.tsx
+│       └── -components/
+├── server/
+│   └── theme.ts
+├── stores/
+│   ├── command.ts
+│   └── theme.ts
+├── router.tsx
+└── routeTree.gen.ts
 ```
 
-## Data Flow
+## Rendering Flow
 
-### SSR + Hydration
+1. `src/routes/__root.tsx` loads the preferred theme via `getThemeServerFn`.
+2. `generateThemeScript()` is injected into the head to apply theme before hydration.
+3. `Providers` sets app-level context and mounts global UI helpers:
+   - `ThemeHotkey`
+   - `GlobalCommandPalette`
+4. Root layout wraps page content with:
+   - `GlobalBackButton` (hidden on `/`)
+   - Route content
+   - `Footer` (includes theme controls)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Server (SSR)                           │
-├─────────────────────────────────────────────────────────────┤
-│  1. Request received                                        │
-│  2. Loader runs (fetch data, auth session)                  │
-│  3. HTML generated with inline theme script                 │
-│  4. Prefetched queries dehydrated to HTML                  │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      Browser                                │
-├─────────────────────────────────────────────────────────────┤
-│  1. HTML loads                                              │
-│  2. Inline script applies theme (prevents flash)           │
-│  3. React hydrates                                          │
-│  4. Dehydrated queries hydrate                              │
-│  5. Client takes over (queries, interactions)               │
-└─────────────────────────────────────────────────────────────┘
-```
+## Data Model
 
-### Authentication Flow
+Showcase cards and command palette assessment entries are centralized in:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Client-Side Auth                         │
-├─────────────────────────────────────────────────────────────┤
-│  useSession() → authClient.getSession() → Cookie + State    │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Server-Side Auth                         │
-├─────────────────────────────────────────────────────────────┤
-│  loader → auth.api.getSession({ headers }) → Session       │
-│  protected route middleware checks session                 │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    API Routes (Better Auth)                  │
-├─────────────────────────────────────────────────────────────┤
-│  /api/auth/* → Better Auth handlers                        │
-│  - signInCredentials                                        │
-│  - signOut                                                  │
-│  - getSession                                               │
-│  - refreshToken                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+- `src/data/assessments.ts`
 
-## Key Concepts
+This module exposes:
 
-### 1. File-Based Routing
+- `assessments` (source list)
+- `getAssessmentById`
+- `getAssessmentsByCompany`
+- `getAssessmentsGroupedByCompany`
 
-Routes are defined in `src/routes/` using TanStack Router's file-based routing:
+## Navigation UX
 
-| File                                         | Route                               |
-| -------------------------------------------- | ----------------------------------- |
-| `routes/index.tsx`                           | `/`                                 |
-| `routes/_auth/login/index.tsx`               | `/login`                            |
-| `routes/_protected/_dashboard/dashboard.tsx` | `/dashboard`                        |
-| `routes/_protected.tsx`                      | Layout wrapper for protected routes |
-| `routes/_auth.tsx`                           | Layout wrapper for auth routes      |
+- Home renders cards from `assessments`.
+- Command palette includes quick actions and grouped assessment navigation.
+- Global back bar uses browser history when available; otherwise navigates to `/`.
 
-### 2. Query Client
+## Theme System
 
-The query client is configured for SSR with proper dehydration:
+- Server cookie API in `src/server/theme.ts`
+- Zustand store in `src/stores/theme.ts`
+- Footer toggle (`src/components/toggle-theme.tsx`)
+- Command palette quick-action toggle (switch light/dark)
 
-- Server creates a fresh query client
-- Queries are prefetched in loaders
-- Queries are dehydrated to HTML
-- Client hydrates and resumes caching
+## Environment
 
-### 3. Theme System
-
-SSR-safe theme handling:
-
-1. **Server**: `getThemeServerFn()` fetches user preference
-2. **Inline Script**: `generateThemeScript()` applies theme before React loads
-3. **Client**: Zustand store manages theme state
-4. **Hooks**: `useTheme()` returns user preference, `useResolvedTheme()` returns actual theme
-
-### 4. Middleware
-
-Route middleware for protection:
-
-- `protectedMiddleware`: Redirects unauthenticated users to login
-- `authMiddleware`: Redirects authenticated users away from auth pages (login)
-
-## Environment Variables
-
-```env
-# Auth (required)
-BETTER_AUTH_URL=http://localhost:3000
-BETTER_AUTH_SECRET=your-secret-key-min-32-chars
-
-# API (optional, for demo data)
-API_BASE_URL=https://dummyjson.com
-```
-
-## Further Reading
-
-- [Conventions](./CONVENTIONS.md) - Code conventions and patterns
-- [Patterns](./PATTERNS.md) - Common patterns with examples
+Environment constants currently exist in `src/constants/env.ts`.
+For this trimmed showcase state, the app path primarily depends on theme cookie handling; additional env vars may be present for future assessments.

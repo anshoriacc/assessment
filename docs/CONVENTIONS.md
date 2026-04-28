@@ -1,282 +1,71 @@
 # Conventions
 
-This document outlines the code conventions and patterns used in this project.
+This document lists coding conventions currently used in this repository.
 
 ## File Naming
 
-Use **kebab-case** for all file names, with these exceptions:
+- Use **kebab-case** for files and folders.
+- Keep TanStack Router file semantics:
+  - `__root.tsx` for root route
+  - `index.tsx` for index routes
+  - `_prefix` for route groups/layout wrappers
+  - `-components` for route-local components
 
-- **Auto-generated files** - Keep as-is (e.g., `routeTree.gen.ts`)
-- **TanStack Router conventions** - Follow Router semantics:
-  - `__root.tsx` - Root route
-  - `_prefix` - Route layout groups
-  - `-components` - Route-specific component directories
-  - `index.tsx` - Route files
+Examples:
 
-| Type       | Convention                    | Example                                 |
-| ---------- | ----------------------------- | --------------------------------------- |
-| Components | kebab-case                    | `login-form.tsx`, `user-profile.tsx`    |
-| Hooks      | kebab-case with `use` prefix  | `use-mobile.ts`, `use-auth.ts`          |
-| Utils      | kebab-case                    | `query-client.ts`, `request-handler.ts` |
-| Routes     | kebab-case                    | `login/index.tsx`, `dashboard.tsx`      |
-| Stores     | kebab-case                    | `theme.ts`, `command.ts`                |
-| Schemas    | kebab-case with schema suffix | `auth.ts`, `user.ts`                    |
+- `src/components/global-back-button.tsx`
+- `src/routes/ellty/quick-form-styling.tsx`
+- `src/routes/ellty/-components/quick-form-styling.tsx`
 
-## Folder Structure
+## Component Declaration
 
-### Components
+- Route and layout components: prefer `function` declarations.
+- Reusable/shared components: prefer `const` arrow components.
 
-```
-src/components/
-├── ui/                    # shadcn-style components
-│   ├── button.tsx
-│   ├── card.tsx
-│   └── ...
-├── -components/           # Route-specific components (hidden)
-├── component-name.tsx     # Shared components
-└── index.ts               # Avoid barrel imports
-```
+## Imports
 
-### Hooks
+- Use `@/` alias for project-root imports.
+- Prefer direct file imports over barrel imports.
 
-```
-src/hooks/
-├── api/                   # Data fetching hooks
-│   ├── auth.ts
-│   └── user.ts
-├── use-mobile.ts
-└── use-feature.ts
-```
-
-### Routes
-
-```
-src/routes/
-├── _prefix/              # Route groups (layout wrappers)
-│   ├── _auth/
-│   │   ├── index.tsx     # /auth (redirect)
-│   │   └── login/
-│   │       ├── index.tsx
-│   │       └── -components/
-│   └── _protected/
-│       ├── index.tsx     # /protected (redirect)
-│       └── _dashboard/
-│           ├── index.tsx
-│           └── dashboard.tsx
-├── index.tsx             # / (home)
-└── __root.tsx           # Root route
-```
-
-## Import Conventions
-
-### Use `@/` Alias
+Good:
 
 ```tsx
-// Good
 import { Button } from '@/components/ui/button'
-import { authClient } from '@/lib/auth/client'
-import { useLoginMutation } from '@/hooks/api/auth'
-
-// Avoid
-import { Button } from '../../components/ui/button'
+import { assessments } from '@/data/assessments'
 ```
 
-### Direct Imports (No Barrel Files)
+## Styling
 
-```tsx
-// Good - import directly from file
-import { Button } from '@/components/ui/button'
+- Tailwind utilities are the primary styling method.
+- Use `cn` from `@/lib/utils` for conditional classes.
+- Keep styles readable and close to component usage.
 
-// Avoid - import from index barrel
-import { Button } from '@/components/ui'
-```
+## Routing
 
-### Heavy Components - Lazy Load
+- Routes are file-based under `src/routes`.
+- Current live route set is minimal and showcase-focused.
+- Keep route metadata (`head`) close to each route file.
 
-```tsx
-// Good - lazy load heavy components
-import { lazy, Suspense } from 'react'
-const Chart = lazy(() => import('@/components/ui/chart'))
+## State and Data
 
-const Dashboard = () => {
-  return (
-    <Suspense fallback={<ChartSkeleton />}>
-      <Chart />
-    </Suspense>
-  )
-}
-```
+- Theme and command state live in Zustand stores (`src/stores`).
+- Showcase entries are centralized in `src/data/assessments.ts`.
+- Use TanStack Query where query caching is needed.
 
-## TypeScript Conventions
+## Accessibility and UX
 
-### Use Type Inference
+- Use semantic HTML where possible.
+- Keep interactive elements keyboard-friendly.
+- Maintain clear labels for command items and buttons.
 
-```tsx
-// Good - let TypeScript infer types
-const user = await fetchUser(id)
-const { data, isLoading } = useQuery(getUserQueryOptions(id))
+## Testing and Validation
 
-// Avoid - redundant type annotations
-const user: User = await fetchUser(id)
-```
+- Use Vitest for tests (`pnpm test`).
+- Before finalizing changes, run at least:
+  - `pnpm build`
+  - `pnpm check` (when formatting/linting is desired)
 
-### Define Types for External Data
+## Git and Generated Files
 
-```tsx
-// Define types for API responses
-type TUserResponse = {
-  id: number
-  name: string
-  email: string
-}
-
-// Use in query options
-export const getUserQueryOptions = queryOptions<TUserResponse>({
-  queryKey: ['user'],
-  queryFn: () => api.get('/user'),
-})
-```
-
-### Use Zod for Validation
-
-```tsx
-// schema/auth.ts
-import { z } from 'zod'
-
-export const signInBodySchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
-```
-
-## React Conventions
-
-### Component Declaration
-
-- Page/layout/route components: use `function`
-  ```tsx
-  function LoginPage() { ... }
-  function DashboardLayout() { ... }
-  ```
-- All other components: use `const`
-  ```tsx
-  export const Header = () => { ... }
-  export const LoginForm = () => { ... }
-  ```
-
-### Component Structure
-
-```tsx
-// 1. Imports
-import { useState } from 'react'
-
-// 2. Types (if needed)
-type Props = {
-  title: string
-  onSubmit: () => void
-}
-
-// 3. Component
-export const MyComponent = ({ title, onSubmit }: Props) => {
-  // 4. Hooks
-  const [state, setState] = useState('')
-
-  // 5. Handlers
-  const handleClick = () => {
-    onSubmit()
-  }
-
-  // 6. Render
-  return (
-    <div>
-      <h1>{title}</h1>
-      <button onClick={handleClick}>Submit</button>
-    </div>
-  )
-}
-```
-
-### Avoid Inline Object Props
-
-```tsx
-// Good - pass primitives or use memo
-const Component = ({ title, onClick }) => {
-  return <button onClick={onClick}>{title}</button>
-}
-
-// Avoid - inline objects cause re-renders
-const Component = () => {
-  return <button onClick={() => doSomething()}>Click</button>
-}
-```
-
-## CSS / Tailwind Conventions
-
-### Use `cn()` Utility
-
-```tsx
-// Combine classes conditionally
-import { cn } from '@/lib/utils'
-;<div
-  className={cn(
-    'base-class',
-    isActive && 'active-class',
-    variant === 'primary' && 'primary-class',
-  )}
-/>
-```
-
-### Avoid Arbitrary Values
-
-```tsx
-// Good - use CSS variables or theme
-<div className="bg-sidebar" />
-<div className="text-primary" />
-
-// Avoid - arbitrary values
-<div className="bg-[#123456]" />
-```
-
-## Git Conventions
-
-### Commit Messages
-
-```
-feat: add user profile page
-fix: resolve login redirect issue
-docs: update API documentation
-refactor: simplify query client setup
-test: add login form tests
-```
-
-### Branch Naming
-
-```
-feature/add-user-profile
-fix/login-redirect-loop
-docs/api-reference
-```
-
-## Testing
-
-- Test files colocated with components
-- Use Vitest for unit tests
-- Follow AAA pattern: Arrange, Act, Assert
-
-```tsx
-// components/button/button.test.tsx
-import { render, screen } from '@testing-library/react'
-import { Button } from './button'
-
-describe('Button', () => {
-  it('renders correctly', () => {
-    render(<Button>Click me</Button>)
-    expect(screen.getByRole('button')).toBeInTheDocument()
-  })
-})
-```
-
-## Further Reading
-
-- [Architecture](./ARCHITECTURE.md) - High-level architecture
-- [Patterns](./PATTERNS.md) - Common patterns with examples
+- Do not manually edit `src/routeTree.gen.ts`.
+- Keep commits focused by concern (docs, feature, cleanup).

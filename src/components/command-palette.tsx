@@ -1,11 +1,13 @@
 import { useHotkey } from '@tanstack/react-hotkeys'
+import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import {
-  IconCalendar,
-  IconDownload,
-  IconPlus,
+  IconBrandGithub,
+  IconFileText,
+  IconHome,
+  IconMoon,
   IconSearch,
-  IconUser,
+  IconSun,
 } from '@tabler/icons-react'
 import {
   Command,
@@ -18,11 +20,22 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command'
+import { getAssessmentsGroupedByCompany } from '@/data/assessments'
 import { useCommandOpen, useCommandSetOpen } from '@/stores/command'
+import { useResolvedTheme, useSetTheme } from '@/stores/theme'
 
 export const GlobalCommandPalette = () => {
+  const navigate = useNavigate()
+  const resolvedTheme = useResolvedTheme()
+  const setTheme = useSetTheme()
   const isOpen = useCommandOpen()
   const setOpen = useCommandSetOpen()
+  const assessmentsByCompany = getAssessmentsGroupedByCompany()
+
+  const nextTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+  const ThemeToggleIcon = nextTheme === 'dark' ? IconMoon : IconSun
+  const themeToggleLabel =
+    nextTheme === 'dark' ? 'Switch to dark mode' : 'Switch to light mode'
 
   useHotkey('Mod+K', () => {
     setOpen(true)
@@ -38,54 +51,57 @@ export const GlobalCommandPalette = () => {
             <CommandItem
               onSelect={() => {
                 setOpen(false)
-                toast.success('Add employee dialog opened')
+                navigate({ to: '/' })
               }}
             >
-              <IconPlus className="mr-2 size-4" />
-              Add New Employee
-              <CommandShortcut>⌘N</CommandShortcut>
+              <IconHome className="mr-2 size-4" />
+              Open Showcase Home
             </CommandItem>
             <CommandItem
               onSelect={() => {
                 setOpen(false)
-                toast.success('Leave request opened')
+                window.open(
+                  'https://github.com/anshoriacc/assessment',
+                  '_blank',
+                  'noopener,noreferrer',
+                )
               }}
             >
-              <IconCalendar className="mr-2 size-4" />
-              Request Time Off
-              <CommandShortcut>⌘L</CommandShortcut>
+              <IconBrandGithub className="mr-2 size-4" />
+              Open GitHub Repository
             </CommandItem>
             <CommandItem
               onSelect={() => {
                 setOpen(false)
-                toast.success('Report generated')
+                void setTheme(nextTheme)
+                toast.success(`Switched to ${nextTheme} mode`)
               }}
             >
-              <IconDownload className="mr-2 size-4" />
-              Generate Report
+              <ThemeToggleIcon className="mr-2 size-4" />
+              {themeToggleLabel}
             </CommandItem>
           </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Recent Employees">
-            <CommandItem
-              onSelect={() => {
-                setOpen(false)
-                toast.success('Opening John Davidson')
-              }}
-            >
-              <IconUser className="mr-2 size-4" />
-              John Davidson
-            </CommandItem>
-            <CommandItem
-              onSelect={() => {
-                setOpen(false)
-                toast.success('Opening Sarah Chen')
-              }}
-            >
-              <IconUser className="mr-2 size-4" />
-              Sarah Chen
-            </CommandItem>
-          </CommandGroup>
+
+          {assessmentsByCompany.map((group) => (
+            <div key={group.company}>
+              <CommandSeparator />
+              <CommandGroup heading={`${group.company} Assessments`}>
+                {group.items.map((assessment) => (
+                  <CommandItem
+                    key={assessment.id}
+                    onSelect={() => {
+                      setOpen(false)
+                      navigate({ to: assessment.to })
+                      toast.success(`Opening ${assessment.title}`)
+                    }}
+                  >
+                    <IconFileText className="mr-2 size-4" />
+                    {assessment.title}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </div>
+          ))}
         </CommandList>
       </Command>
     </CommandDialog>
@@ -102,7 +118,7 @@ export const CommandPaletteButton = () => {
       onClick={() => setOpen(true)}
     >
       <IconSearch className="mr-2 size-4" />
-      Search employees, policies...
+      Search assessments...
     </button>
   )
 }

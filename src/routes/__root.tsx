@@ -14,17 +14,17 @@ import { Toaster } from 'sonner'
 import appCss from '../styles.css?url'
 import { useResolvedTheme } from '@/stores/theme'
 import { getThemeServerFn } from '@/server/theme'
-import { getSessionQueryOptions } from '@/hooks/api/auth'
 import { generateThemeScript } from '@/components/inline-scripts'
 import { Providers } from '@/components/providers'
 import { NotFound } from '@/components/not-found'
+import { Footer } from '@/components/footer'
+import { GlobalBackButton } from '@/components/global-back-button'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
-  loader: async ({ context }) => {
+  loader: async () => {
     const theme = await getThemeServerFn()
-    await context.queryClient.prefetchQuery(getSessionQueryOptions)
     return { theme }
   },
   head: ({ loaderData }) => {
@@ -40,7 +40,7 @@ export const Route = createRootRouteWithContext<{
           content: 'width=device-width, initial-scale=1',
         },
         {
-          title: 'TanStack Start Starter',
+          title: 'Assessment',
         },
       ],
       links: [
@@ -79,7 +79,15 @@ function RootDocument({ children }: RootDocumentProps) {
       </head>
 
       <body>
-        <Providers theme={theme}>{children}</Providers>
+        <Providers theme={theme}>
+          <div className="bg-background text-foreground flex min-h-dvh flex-col">
+            <GlobalBackButton />
+
+            <div className="flex-1">{children}</div>
+
+            <Footer />
+          </div>
+        </Providers>
 
         <TanStackDevtools
           config={{

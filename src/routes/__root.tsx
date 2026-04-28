@@ -56,6 +56,11 @@ export const Route = createRootRouteWithContext<{
           type: 'text/javascript',
           children: generateThemeScript(theme),
         },
+        {
+          defer: true,
+          src: 'https://umami.anshori.com/script.js',
+          'data-website-id': '16105c97-a6e3-4f03-8283-9f8972cdfd04',
+        },
       ],
     }
   },

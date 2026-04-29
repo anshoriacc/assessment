@@ -50,7 +50,7 @@ function HomePage() {
 
         <MotionItem className="grid gap-4 md:grid-cols-3">
           {assessments.map((assessment) => (
-            <Card key={assessment.id} className="border-border/70">
+            <Card key={assessment.id}>
               <CardHeader>
                 <CardTitle>{assessment.title}</CardTitle>
                 {/*<CardDescription className="capitalize">

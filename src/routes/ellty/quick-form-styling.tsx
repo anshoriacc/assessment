@@ -29,18 +29,13 @@ function QuickFormStylingPage() {
     >
       <MotionItem className="flex flex-col space-y-6">
         <div className="space-y-4">
-          <Badge
-            variant="outline"
-            className="w-fit gap-1.5 rounded-full px-3 py-1"
-          >
+          <Badge variant="outline">
             <IconCheckbox className="size-3.5" />
             Ellty
           </Badge>
 
           <div className="space-y-2">
-            <h1 className="font-medium sm:text-lg">
-              Quick Form Styling
-            </h1>
+            <h1 className="font-medium sm:text-lg">Quick Form Styling</h1>
 
             <p className="text-muted-foreground max-w-3xl text-sm leading-relaxed sm:text-base">
               Interactive demonstration of form element styling states across

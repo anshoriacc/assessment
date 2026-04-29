@@ -14,6 +14,7 @@ import { Route as ElltyRouteImport } from './routes/ellty'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ElltyIndexRouteImport } from './routes/ellty/index'
 import { Route as ElltyQuickFormStylingRouteImport } from './routes/ellty/quick-form-styling'
+import { Route as ElltyNumberThreadsIndexRouteImport } from './routes/ellty/number-threads/index'
 
 const HealthRoute = HealthRouteImport.update({
   id: '/health',
@@ -40,6 +41,11 @@ const ElltyQuickFormStylingRoute = ElltyQuickFormStylingRouteImport.update({
   path: '/quick-form-styling',
   getParentRoute: () => ElltyRoute,
 } as any)
+const ElltyNumberThreadsIndexRoute = ElltyNumberThreadsIndexRouteImport.update({
+  id: '/number-threads/',
+  path: '/number-threads/',
+  getParentRoute: () => ElltyRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,12 +53,14 @@ export interface FileRoutesByFullPath {
   '/health': typeof HealthRoute
   '/ellty/quick-form-styling': typeof ElltyQuickFormStylingRoute
   '/ellty/': typeof ElltyIndexRoute
+  '/ellty/number-threads/': typeof ElltyNumberThreadsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/health': typeof HealthRoute
   '/ellty/quick-form-styling': typeof ElltyQuickFormStylingRoute
   '/ellty': typeof ElltyIndexRoute
+  '/ellty/number-threads': typeof ElltyNumberThreadsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/health': typeof HealthRoute
   '/ellty/quick-form-styling': typeof ElltyQuickFormStylingRoute
   '/ellty/': typeof ElltyIndexRoute
+  '/ellty/number-threads/': typeof ElltyNumberThreadsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -70,8 +79,14 @@ export interface FileRouteTypes {
     | '/health'
     | '/ellty/quick-form-styling'
     | '/ellty/'
+    | '/ellty/number-threads/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/health' | '/ellty/quick-form-styling' | '/ellty'
+  to:
+    | '/'
+    | '/health'
+    | '/ellty/quick-form-styling'
+    | '/ellty'
+    | '/ellty/number-threads'
   id:
     | '__root__'
     | '/'
@@ -79,6 +94,7 @@ export interface FileRouteTypes {
     | '/health'
     | '/ellty/quick-form-styling'
     | '/ellty/'
+    | '/ellty/number-threads/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -124,17 +140,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElltyQuickFormStylingRouteImport
       parentRoute: typeof ElltyRoute
     }
+    '/ellty/number-threads/': {
+      id: '/ellty/number-threads/'
+      path: '/number-threads'
+      fullPath: '/ellty/number-threads/'
+      preLoaderRoute: typeof ElltyNumberThreadsIndexRouteImport
+      parentRoute: typeof ElltyRoute
+    }
   }
 }
 
 interface ElltyRouteChildren {
   ElltyQuickFormStylingRoute: typeof ElltyQuickFormStylingRoute
   ElltyIndexRoute: typeof ElltyIndexRoute
+  ElltyNumberThreadsIndexRoute: typeof ElltyNumberThreadsIndexRoute
 }
 
 const ElltyRouteChildren: ElltyRouteChildren = {
   ElltyQuickFormStylingRoute: ElltyQuickFormStylingRoute,
   ElltyIndexRoute: ElltyIndexRoute,
+  ElltyNumberThreadsIndexRoute: ElltyNumberThreadsIndexRoute,
 }
 
 const ElltyRouteWithChildren = ElltyRoute._addFileChildren(ElltyRouteChildren)

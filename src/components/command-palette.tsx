@@ -18,7 +18,6 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from '@/components/ui/command'
 import {
   getAssessmentsGroupedByCompany,
@@ -95,7 +94,11 @@ export const GlobalCommandPalette = () => {
                     onSelect={() => {
                       setOpen(false)
                       if (isExternalAssessmentDestination(assessment)) {
-                        window.open(assessment.to, '_blank', 'noopener,noreferrer')
+                        window.open(
+                          assessment.to,
+                          '_blank',
+                          'noopener,noreferrer',
+                        )
                       } else {
                         navigate({ to: assessment.to })
                       }

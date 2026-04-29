@@ -20,6 +20,14 @@ export const assessments: Assessment[] = [
     summary:
       'Interactive styling states for checkboxes and buttons with detailed state explanation.',
   },
+  {
+    id: 'number-threads',
+    title: 'Number Threads',
+    company: 'Ellty',
+    to: '/ellty/number-threads',
+    summary:
+      'Tree-based arithmetic discussion app with authentication, recursive replies, and persistence.',
+  },
 ]
 
 export function isExternalAssessmentDestination(assessment: Assessment) {

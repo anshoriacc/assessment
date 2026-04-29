@@ -1,6 +1,9 @@
-import { MotionContainer, MotionItem } from '@/components/ui/motion'
 import { createFileRoute } from '@tanstack/react-router'
+import { IconCheckbox } from '@tabler/icons-react'
+
+import { MotionContainer, MotionItem } from '@/components/ui/motion'
 import { QuickFormStyling } from './-components/quick-form-styling'
+import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/ellty/quick-form-styling')({
   component: QuickFormStylingPage,
@@ -22,10 +25,29 @@ function QuickFormStylingPage() {
   return (
     <MotionContainer
       as="main"
-      className="mx-auto min-h-dvh w-full max-w-3xl space-y-12 py-12"
+      className="mx-auto min-h-dvh w-full max-w-3xl space-y-12 p-4 pt-16 sm:p-6 sm:pt-16"
     >
       <MotionItem className="flex flex-col space-y-6">
-        <h1 className="font-medium sm:text-lg">Quick Form Styling</h1>
+        <div className="space-y-4">
+          <Badge
+            variant="outline"
+            className="w-fit gap-1.5 rounded-full px-3 py-1"
+          >
+            <IconCheckbox className="size-3.5" />
+            Ellty
+          </Badge>
+
+          <div className="space-y-2">
+            <h1 className="font-medium sm:text-lg">
+              Quick Form Styling
+            </h1>
+
+            <p className="text-muted-foreground max-w-3xl text-sm leading-relaxed sm:text-base">
+              Interactive demonstration of form element styling states across
+              checkboxes, radio buttons, and inputs.
+            </p>
+          </div>
+        </div>
 
         <QuickFormStyling />
 
